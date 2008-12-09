@@ -2,6 +2,15 @@
 
 A Rails plugin in the early stages of development to add basic change-tracking facility to ActiveRecord associations.
 
+***
+<b>GOTCHA:</b> Sorry, DirtyAssociations require edge rails (currently 2.3.0), because it makes use of +default_scope+. I didn't want to reinvent the wheel...
+
+Basically, +has_dirty_associations+ uses the +:include+ option to preload all of the associations that it's watching. I'd image bad things happen if you try to override this.
+***
+
+	# installing edge rails
+	$ rake rails:freeze:edge
+
 == Usage
 
 	# In the model:
