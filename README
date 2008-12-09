@@ -1,13 +1,68 @@
 DirtyAssociations
 =================
 
-Introduction goes here.
+A Rails plugin in the early stages of development to add basic change-tracking facility to ActiveRecord associations.
 
 
 Example
 =======
 
-Example goes here.
+# In the model:
 
+class Gallery < ActiveRecord::Base
+	belongs_to :user
+	has_many :photos
+	has_many :comments
+	has_and_belongs_to_many :subscribers
+	
+	has_dirty_associations :photos, :comments
+	
+	#...	
+end
 
-Copyright (c) 2008 [name of plugin creator], released under the MIT license
+Gallery.has_dirty_associations :photos, :comments
+Gallery.watched_associations 
+	# => [:photos, :comments]
+
+Gallery.has_dirty_associations
+Gallery.watched_associations 
+	# => [:user, :photos, :comments, :subscribers]
+	
+Gallery.has_dirty_associations :all
+Gallery.watched_associations 
+	# => [:user, :photos, :comments, :subscribers]
+
+Gallery.has_dirty_associations :children
+Gallery.watched_associations 
+	# => [:comments, :photos, :subscribers]
+	
+Gallery.has_dirty_associations :parents
+Gallery.watched_associations 
+	# => [:user]
+
+Gallery.has_dirty_association :user
+Gallery.watched_association
+	# => [:user]
+
+gallery = Gallery.first
+
+gallery.new_photos? 
+	# => false
+
+gallery.photos.build
+
+gallery.new_photos? 
+	# => true
+
+gallery.new_photos 
+	# => [#<Photo:0x20da67c>]
+	
+gallery.comments.first.destroy
+
+gallery.deleted_comments?
+	# => true
+	
+gallery.deleted_comments 
+	# => [#<Comment:0x20da21b>]
+
+Copyright (c) 2008 Josh Pencheon, released under the MIT license
