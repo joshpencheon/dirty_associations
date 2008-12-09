@@ -1,5 +1,4 @@
-0.1.1 9/12/08
-=============
+=== 0.1.1 9/12/08
 
 * Added #cache_<association>! and #<association>_from_cache methods.
 * Added predicate methods #new_<association>?, #edited_<association>? etc. to comply with documentation!
@@ -10,7 +9,6 @@
 
 * Added #<association>_changed? method as an alias for #any_<association>_changed?, to make more sense when dealing with a singular record.
 
-0.1.0 9/12/08
-=============
+=== 0.1.0 9/12/08
 
 * Initial Release
