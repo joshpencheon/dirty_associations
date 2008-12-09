@@ -1,10 +1,8 @@
-DirtyAssociations
-=================
+= DirtyAssociations
 
 A Rails plugin in the early stages of development to add basic change-tracking facility to ActiveRecord associations.
 
-Example
-=======
+== Usage
 
 	# In the model:
 
@@ -19,8 +17,7 @@ Example
 		#...	
 	end
 
-Class Methods
-=============
+=== Class Methods
 
 Setting up:
 
@@ -49,8 +46,7 @@ Setting up:
 	Gallery.watched_association
 		# => [:user]
 
-Instance Methods
-================
+=== Instance Methods
 
 Shows some basic interaction:
 
@@ -75,8 +71,7 @@ Shows some basic interaction:
 	gallery.deleted_comments 
 		# => [#<Comment:0x20da21b>]
 
-Individual Records
-==================
+=== Individual Records
 
 You can also find out more about the actual changes:
 
@@ -95,8 +90,7 @@ You can also find out more about the actual changes:
 	gallery.photos_changes
 		# => {4 => { "title" => ["A boring photo", "A lovely photo"] }}
 	
-Caching Changes
-===============
+=== Caching Changes
 
 I'm not really sure why you'd want to do this, but it might come in handy.
 
@@ -127,8 +121,7 @@ I'm not really sure why you'd want to do this, but it might come in handy.
 	gallery.photos_from_cache.first.title
 		# => 'Some original title'
 	
-Disclaimer
-==========
+=== Disclaimer
 
 This is about as rough and raw as it comes, and is my first go at making a plugin, so be kind!
 
