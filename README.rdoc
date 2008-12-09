@@ -1,0 +1,135 @@
+DirtyAssociations
+=================
+
+A Rails plugin in the early stages of development to add basic change-tracking facility to ActiveRecord associations.
+
+Example
+=======
+
+	# In the model:
+
+	class Gallery < ActiveRecord::Base
+		belongs_to :user
+		has_many :photos
+		has_many :comments
+		has_and_belongs_to_many :subscribers
+	
+		has_dirty_associations :photos, :comments
+	
+		#...	
+	end
+
+Class Methods
+=============
+
+Setting up:
+
+	Gallery.has_dirty_associations :photos, :comments
+	Gallery.watched_associations 
+		# => [:photos, :comments]
+
+	Gallery.has_dirty_associations
+	Gallery.watched_associations 
+		# => [:user, :photos, :comments, :subscribers]
+	
+	Gallery.has_dirty_associations :all
+	Gallery.watched_associations 
+		# => [:user, :photos, :comments, :subscribers]
+
+	Gallery.has_dirty_associations :children
+	Gallery.watched_associations 
+		# => [:comments, :photos, :subscribers]
+	
+	Gallery.has_dirty_associations :parents
+	Gallery.watched_associations 
+		# => [:user]
+
+	# Singular versions are available
+	Gallery.has_dirty_association :user
+	Gallery.watched_association
+		# => [:user]
+
+Instance Methods
+================
+
+Shows some basic interaction:
+
+	gallery = Gallery.first
+
+	gallery.new_photos? 
+		# => false
+
+	gallery.photos.build
+
+	gallery.new_photos? 
+		# => true
+
+	gallery.new_photos 
+		# => [#<Photo:0x20da67c>]
+	
+	gallery.comments.first.destroy
+
+	gallery.deleted_comments?
+		# => true
+	
+	gallery.deleted_comments 
+		# => [#<Comment:0x20da21b>]
+
+Individual Records
+==================
+
+You can also find out more about the actual changes:
+
+	gallery.photos.first.inspect
+		# => #<Photo id: 4, title: "A boring photo", gallery_id: 1, created_at: "2008-11-29 18:52:47", updated_at: "2008-12-07 20:01:25">
+	
+	gallery.photos.first.title = "A lovely photo"
+
+	# Also available, without the +any_+ prefix: +gallery.user_changed?+
+	gallery.any_photos_changed?
+		# => true
+	
+	gallery.photos_changed
+		# => {4 => ["title"]}
+
+	gallery.photos_changes
+		# => {4 => { "title" => ["A boring photo", "A lovely photo"] }}
+	
+Caching Changes
+===============
+
+I'm not really sure why you'd want to do this, but it might come in handy.
+
+	gallery.photos.first.title
+		# => 'Some original title'
+	
+	gallery.photos.first.title = 'A changed title'
+
+# Without caching:
+
+	gallery.edited_photos?
+		# => true
+	
+	gallery.save
+
+	gallery.edited_photos?
+		# => false
+	
+# With caching:
+
+	gallery.cache_photos!
+
+	gallery.save
+
+	gallery.photos.first.title
+		# => 'A changed title'
+	
+	gallery.photos_from_cache.first.title
+		# => 'Some original title'
+	
+Disclaimer
+==========
+
+This is about as rough and raw as it comes, and is my first go at making a plugin, so be kind!
+
+Copyright (c) 2008 Josh Pencheon, released under the MIT license
