@@ -1,6 +1,6 @@
 module DirtyAssociations
   
-  VERSION = '0.1.1'
+  VERSION = '0.1.2'
   
   class << self
     def included base
@@ -25,12 +25,25 @@ module DirtyAssociations
             [:belongs_to, :has_and_belongs_to_many].include? reflection.macro }.map(&:first)
         else
           associations
-        end
+        end  
         
       write_inheritable_attribute(:watched_associations, associations_to_watch)
 
       class_eval do
         default_scope :include => associations_to_watch
+        
+        def self.watched_associations
+          read_inheritable_attribute :watched_associations
+        end
+        
+        class <<self
+          alias_method :watched_association, :watched_associations
+        end
+        
+        # Override the default_scope that includes all associations
+        def self.all
+          with_exclusive_scope { super }
+        end        
       end
 
       associations_to_watch.each do |association|        
@@ -58,17 +71,20 @@ module DirtyAssociations
         unless options[:update_only]
           associated_class = self.reflections[association].active_record
           
+          cattr_accessor :"cached_#{association}"
+          
           class << associated_class
             # add any necassary callbacks here
             # e.g. before_save
           end
           
           define_method "cache_#{association}!" do
-            write_inheritable_attribute(:"cached_#{association}", records_from_association(association, true))
+            puts 'WRITING TO CACHE'
+            self.class.send(:"cached_#{association}=", records_from_association(association, true))
           end
           
           define_method "#{association}_from_cache" do
-            read_inheritable_attribute(:"cached_#{association}")
+            self.class.send(:"cached_#{association}")
           end
           
           
@@ -106,22 +122,28 @@ module DirtyAssociations
       end  
     end
     alias_method :has_dirty_association, :has_dirty_associations
-    
-    def watched_associations
-      read_inheritable_attribute :watched_associations
-    end
-    alias_method :watched_association, :watched_associations
   end
   
   module InstanceMethods
     def watched_associated_records
       self.class.watched_associations.map { |assoc| self.send(assoc) }.flatten
     end
+    
+    def cache_associated!
+      self.class.watched_associations.each { |assoc| send(:"cache_#{assoc}!") }
+    end
+    
+    def associated_from_cache
+      returning({}) do |hash|
+        self.class.watched_associations.each { |assoc| hash[assoc] = send(:"#{assoc}_from_cache") }
+      end
+    end
 
     private
 
-    def records_from_association(*args) 
-      Array(self.send(*args))
+    def records_from_association(association, clone = false) 
+      records = Array(self.send(association))
+      clone ? records.collect(&:clone) : records
     end
   end
 end

@@ -1,3 +1,9 @@
+=== 0.1.2 14/12/08
+
+* #all class method is overwritten to include #with_exclusive_scope.
+* Added #cache_associated! & #associated_from_cache instance methods, which perform caching for all watched associations.
+* Updated README & MIT-LICENCE
+
 === 0.1.1 9/12/08
 
 * Added #cache_<association>! and #<association>_from_cache methods.
