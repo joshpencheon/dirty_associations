@@ -1,3 +1,10 @@
+=== 0.3.0 21/12/08
+
+* Added #changes_by_type instance method.
+* #comprehensive_changes now returns empty sets for associations that have no changes.
+* #comprehensive_changes no longer nests associated record changes under the :+associated+ key.
+* Updated README.
+
 === 0.2.0 20/12/08
 
 * Added #comprehensive_changes instance method.

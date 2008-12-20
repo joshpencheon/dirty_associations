@@ -85,7 +85,7 @@ You can also find out more about the actual changes:
   
   gallery.photos.first.title = "A lovely photo"
 
-  # Also available, without the +any_+ prefix: +gallery.user_changed?+
+  # Also available without the 'any_' prefix: gallery.user_changed?
   gallery.any_photos_changed?
     # => true
   
@@ -107,8 +107,43 @@ The +comprehensive_changes+ instance method provides structured change data for 
   gallery.comments.first.body = "Not such a great set..."
   
   gallery.comprehensive_changes
-    # => { :self => { :title => ["Some original title", "Some other gallery title"] },
-           :associated => { :comments => { 12 => { :body => ["Pretty awful.", "Not such a great set..."] }}} }
+    # => { 
+           :self        => { :title => ["Some original title", "Some other gallery title"] },
+           :comments    => { 
+             12 => { :body => ["Pretty awful.", "Not such a great set..."] } 
+            },
+           :photos      => {},
+           :subscribers => {},
+           :user        => {}  
+          } 
+                            
+Slightly simpler example:
+
+  gallery.comprehensive_changes[:comments][12][:body]
+    # => ["Pretty awful.", "Not such a great set..."]
+           
+You can also use the +changes_by_type+ method to arrange the changes depending on the type of change:
+  
+  gallery.photos.build
+  
+  gallery.photos.first.destroy
+  
+  gallery.changes_by_type
+    # => { 
+          :self => { :title => ["Some original title", "Some other gallery title"] },
+          :comments => { 
+                :edited => { #<Comment0x20da21b> => { :body => ["Pretty awful.", "Not such a great set..."] } }
+           },
+          :photos => {
+                :new     => [ #<Photo:0x10ae23a> ],
+                :deleted => [ #<Photo:0x12df16b> ]
+          }
+         }
+         
+  gallery.destroy
+  
+  gallery.changes_by_type
+    # => { :self => :deleted }
 
 === Caching Changes
 
