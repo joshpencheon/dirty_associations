@@ -97,7 +97,7 @@ You can also find out more about the actual changes:
 
 === Changes for all watched_associations
 
-The #comprehensive_changes method provides structured change data for the record in question as well as all watched associated records.
+The +comprehensive_changes+ instance method provides structured change data for the record in question as well as all watched associated records.
 
   gallery.title = "Some other gallery title"
   
