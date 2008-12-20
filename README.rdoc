@@ -107,12 +107,8 @@ The #comprehensive_changes method provides structured change data for the record
 	gallery.comments.first.body = "Not such a great set..."
 	
 	gallery.comprehensive_changes
-		# => {
-		 		 :self 				=> { :title => ["Some original title", "Some other gallery title"] },
-		 		 :assocations => { :comments => { 
-						12 => { :body => ["Pretty awful.", "Not such a great set..."] }
-				  } }
-			  }
+		# => { :self => { :title => ["Some original title", "Some other gallery title"] },
+		 		 	 :associated => { :comments => { 12 => { :body => ["Pretty awful.", "Not such a great set..."] }}} }
 
 === Caching Changes
 
