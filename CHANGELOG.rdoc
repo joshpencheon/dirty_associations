@@ -1,8 +1,14 @@
+=== 0.2.0 20/12/08
+
+* Added #comprehensive_changes instance method.
+* Added #clear_cache! method to remove all cached records from memory.
+* Updated README.
+
 === 0.1.2 14/12/08
 
 * #all class method is overwritten to include #with_exclusive_scope.
 * Added #cache_associated! & #associated_from_cache instance methods, which perform caching for all watched associations.
-* Updated README & MIT-LICENCE
+* Updated README & MIT-LICENCE.
 
 === 0.1.1 9/12/08
 

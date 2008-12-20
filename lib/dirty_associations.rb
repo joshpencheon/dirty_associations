@@ -1,6 +1,6 @@
 module DirtyAssociations
   
-  VERSION = '0.1.2'
+  VERSION = '0.2.0'
   
   class << self
     def included base
@@ -9,6 +9,7 @@ module DirtyAssociations
   end
   
   module ClassMethods
+    # Calling this defines all other methods.
     def has_dirty_associations(*associations)
       include InstanceMethods
 
@@ -43,7 +44,7 @@ module DirtyAssociations
         # Override the default_scope that includes all associations
         def self.all
           with_exclusive_scope { super }
-        end        
+        end    
       end
 
       associations_to_watch.each do |association|        
@@ -79,7 +80,6 @@ module DirtyAssociations
           end
           
           define_method "cache_#{association}!" do
-            puts 'WRITING TO CACHE'
             self.class.send(:"cached_#{association}=", records_from_association(association, true))
           end
           
@@ -137,6 +137,26 @@ module DirtyAssociations
       returning({}) do |hash|
         self.class.watched_associations.each { |assoc| hash[assoc] = send(:"#{assoc}_from_cache") }
       end
+    end
+    
+    def clear_cache!
+      self.class.watched_associations.each { |assoc| send(:"cached_#{assoc}=", nil) }
+    end
+    
+    def comprehensive_changes
+      changes_to_self = self.changes
+      
+      changes_to_assoc = Hash.new { |hash, key| hash[key] = {} }
+      
+      self.class.watched_associations.each do |assoc|
+        records_from_association(assoc).each do |record|
+          changes_to_assoc[assoc][record.id] = record.changes if record.changed?
+        end
+      end
+      
+      changes_to_assoc.reject! { |assoc, changes| changes.blank? }
+      
+      { :self => changes_to_self, :associated => changes_to_assoc }.reject { |type, changes| changes.blank? }
     end
 
     private

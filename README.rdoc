@@ -94,7 +94,26 @@ You can also find out more about the actual changes:
 
 	gallery.photos_changes
 		# => {4 => { "title" => ["A boring photo", "A lovely photo"] }}
+
+=== Changes for all watched_associations
+
+The #comprehensive_changes method provides structured change data for the record in question as well as all watched associated records.
+
+	gallery.title = "Some other gallery title"
 	
+	gallery.comments.first.id
+	  # => 12
+	
+	gallery.comments.first.body = "Not such a great set..."
+	
+	gallery.comprehensive_changes
+		# => {
+		 		 :self 				=> { :title => ["Some original title", "Some other gallery title"] },
+		 		 :assocations => { :comments => { 
+						12 => { :body => ["Pretty awful.", "Not such a great set..."] }
+				  } }
+			  }
+
 === Caching Changes
 
 I'm not really sure why you'd want to do this, but it might come in handy.
@@ -128,6 +147,11 @@ With caching:
 	
 	gallery.photos_from_cache.first.title
 		# => 'Some original title'
+		
+	gallery.clear_cache!
+	
+	gallery.photos_from_cache
+		# => nil
 		
 Additionally, you can cache all associations at once, and read back all together:
 
