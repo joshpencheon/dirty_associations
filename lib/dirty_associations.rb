@@ -1,6 +1,6 @@
 module DirtyAssociations
   
-  VERSION = '0.3.0'
+  VERSION = '0.3.1'
   
   class << self
     def included base
@@ -149,7 +149,7 @@ module DirtyAssociations
       return { :self => :deleted } if self.frozen? 
       
       returning({}) do |changes|
-        changes[:self] = self.changes
+        changes[:self] = self.changes if self.changed?
         
         self.class.watched_associations.each do |assoc|
           changes[assoc] = {}

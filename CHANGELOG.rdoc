@@ -1,3 +1,7 @@
+=== 0.3.1 21/12/08
+
+* The #changes_by_type instance method no longer returns an empty hash under :+self+ if there were no changes to the parent record.
+
 === 0.3.0 21/12/08
 
 * Added #changes_by_type instance method.
