@@ -1,6 +1,6 @@
 module DirtyAssociations
   
-  VERSION = '0.3.1'
+  VERSION = '0.3.2'
   
   class << self
     def included base
