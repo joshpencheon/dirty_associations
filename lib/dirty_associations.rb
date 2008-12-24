@@ -98,7 +98,7 @@ module DirtyAssociations
         edited_method_name = "edited_#{association}"          
         define_method edited_method_name do
           records_from_association(association).select do |record|
-            record.changed? && !record.new_record?
+            record.changed? && !record.new_record? && !record.frozen?
           end
         end
         
