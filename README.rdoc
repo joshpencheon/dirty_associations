@@ -50,6 +50,11 @@ Setting up:
   Gallery.has_dirty_association :user
   Gallery.watched_association
     # => [:user]
+    
+If you like, +has_dirty_associations_ can preload all watched_associations for you:
+
+  Gallery.has_dirty_associations :photos, :comments, 
+    :preload => true
 
 === Instance Methods
 

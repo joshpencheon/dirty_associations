@@ -1,6 +1,6 @@
 module DirtyAssociations
   
-  VERSION = '0.3.2'
+  VERSION = '0.4'
   
   class << self
     def included base
@@ -12,6 +12,8 @@ module DirtyAssociations
     # Calling this defines all other methods.
     def has_dirty_associations(*associations)
       include InstanceMethods
+      
+      options = associations.extract_options!
       
       associations_to_watch = case associations
         when [], [:all]  then
@@ -29,20 +31,22 @@ module DirtyAssociations
       write_inheritable_attribute(:watched_associations, associations_to_watch)
 
       class_eval do
-        default_scope :include => associations_to_watch
+        if options[:preload]
+          default_scope :include => associations_to_watch
         
+          # Override the default_scope that includes all associations
+          def self.all
+            with_exclusive_scope { super }
+          end
+        end
+      
         def self.watched_associations
           read_inheritable_attribute :watched_associations
         end
         
         class <<self
           alias_method :watched_association, :watched_associations
-        end
-        
-        # Override the default_scope that includes all associations
-        def self.all
-          with_exclusive_scope { super }
-        end    
+        end  
       end
 
       associations_to_watch.each do |association|        
